@@ -241,7 +241,6 @@ class App {
    </li>`;
 
    form.insertAdjacentHTML('afterend',html);
-
   }
 }
 
