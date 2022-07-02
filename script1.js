@@ -190,7 +190,9 @@ class App {
           className: `${workout.type}-popup`,
         })
       )
-      .setPopupContent('Workout')
+      .setPopupContent(`${
+        workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'
+      }`)
       .openPopup();
   }
   //render workout on list
