@@ -20,15 +20,31 @@ if (navigator.geolocation) {
 
       const map = L.map('map').setView(coords, 13);
 
+      //LeafLet Library for Map
       L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(map);
 
-      L.marker(coords)
-        .addTo(map)
-        .bindPopup('A pretty CSS3 popup.<br> Easily customizable.')
-        .openPopup();
+      //Map Marker Implementation
+      map.on('click', function(mapEvent){
+
+        const {lat,lng} = mapEvent.latlng;
+
+        L.marker([lat,lng])
+          .addTo(map)
+          .bindPopup(
+            L.popup({
+                maxWidth: 250,
+                minWidth: 100,
+                autoClose: false,
+                closeOnClick: false,
+                className: 'running-popup',
+            })
+          )
+          .setPopupContent('Workout')
+          .openPopup();
+      });
     },
     function () {
       alert(`Not able to find your current location.`);
