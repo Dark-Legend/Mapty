@@ -44,6 +44,7 @@ if (navigator.geolocation) {
           )
           .setPopupContent('Workout')
           .openPopup();
+          
       });
     },
     function () {
