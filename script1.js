@@ -192,7 +192,7 @@ class App {
       )
       .setPopupContent(`${
         workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'
-      }`)
+      } ${workout.description}`)
       .openPopup();
   }
   //render workout on list
@@ -241,6 +241,7 @@ class App {
    </li>`;
 
    form.insertAdjacentHTML('afterend',html);
+
   }
 }
 
