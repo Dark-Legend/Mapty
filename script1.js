@@ -91,6 +91,7 @@ class App {
     //for clicking on the list of workout and takes you to the marker of the workout
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
   }
+  
 
   //This method gives the current position of the person
   __getPosition() {
