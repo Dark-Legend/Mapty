@@ -33,9 +33,9 @@ class Workout {
     } ${this.date.getDate()}`;
   }
 
-  // click() {
-  //   this.clicks++;
-  // }
+  click() {
+    this.clicks++;
+  }
 }
 
 class Running extends Workout {
@@ -70,8 +70,6 @@ class Cycling extends Workout {
   }
 }
 
-const running1 = new Running([29, -12], 2, 30, 250);
-const cycling2 = new Cycling([29, -12], 20, 2, 550);
 
 class App {
   #map;
@@ -298,7 +296,7 @@ class App {
   }
 
   _setLocalStorage() {
-    localStorage.setItem('workout', JSON.stringify(this.#workouts));
+    localStorage.setItem('workouts', JSON.stringify(this.#workouts));
   }
 
   _getLocalStorage() {

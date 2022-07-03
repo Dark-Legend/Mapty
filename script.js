@@ -301,7 +301,7 @@ class App {
   }
 
   _setLocalStorage() {
-    localStorage.setItem('workouts', JSON.stringify(this.#workouts));
+    localStorage.setItem('workout', JSON.stringify(this.#workouts));
   }
 
   _getLocalStorage() {
