@@ -33,9 +33,9 @@ class Workout {
     } ${this.date.getDate()}`;
   }
 
-  click() {
-    this.clicks++;
-  }
+  // click() {
+  //   this.clicks++;
+  // }
 }
 
 class Running extends Workout {
@@ -83,6 +83,9 @@ class App {
     //function for getting users location
     this.__getPosition();
 
+    //function for getting the data from local storage
+    this._getLocalStorage();
+
     form.addEventListener('submit', this.__newWorkout.bind(this));
 
     //for changing the input types for cycling and running
@@ -91,7 +94,7 @@ class App {
     //for clicking on the list of workout and takes you to the marker of the workout
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
   }
-  
+
 
   //This method gives the current position of the person
   __getPosition() {
@@ -122,6 +125,10 @@ class App {
 
     //Map Marker Implementation
     this.#map.on('click', this.__showForm.bind(this));
+
+    this.#workouts.forEach(work => {
+      this._renderWorkoutMarker(work);
+    });
   }
 
   __showForm(mapE) {
@@ -200,6 +207,9 @@ class App {
     //hide from + clear input fields
     this._hideForm();
     //clearing input fields
+
+    //Setting the local storage to all workouts
+    this._setLocalStorage();
   }
   _renderWorkoutMarker(workout) {
     L.marker(workout.coords)
@@ -285,6 +295,27 @@ class App {
         duration: 1,
       },
     });
+  }
+
+  _setLocalStorage() {
+    localStorage.setItem('workout', JSON.stringify(this.#workouts));
+  }
+
+  _getLocalStorage() {
+    const data = JSON.parse(localStorage.getItem('workouts'));
+
+    if(!data) return;
+
+    this.#workouts = data;
+
+    this.#workouts.forEach(work => {
+      this._renderWorkout(work);
+    })
+  }
+
+  reset() {
+    localStorage.removeItem('workout');
+    location.reload();
   }
 }
 
