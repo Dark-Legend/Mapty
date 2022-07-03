@@ -315,7 +315,6 @@ class App {
     localStorage.removeItem('workout');
     location.reload();
   }
-  
 }
 
 //For Displaying Marke
