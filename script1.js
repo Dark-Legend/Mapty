@@ -16,6 +16,7 @@ let map, mapEvent;
 class Workout {
   date = new Date();
   id = (Date.now() + '').slice(-10);
+  clicks = 0;
 
   constructor(coords, distance, duration) {
     this.coords = coords;
@@ -30,6 +31,10 @@ class Workout {
     this.description = `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${
       months[this.date.getMonth()]
     } ${this.date.getDate()}`;
+  }
+
+  click() {
+    this.clicks++;
   }
 }
 
@@ -70,14 +75,21 @@ const cycling2 = new Cycling([29, -12], 20, 2, 550);
 
 class App {
   #map;
+  #mapZoomLevel = 13;
   #mapEvent;
   #workouts = [];
 
   constructor() {
+    //function for getting users location
     this.__getPosition();
+
     form.addEventListener('submit', this.__newWorkout.bind(this));
+
     //for changing the input types for cycling and running
     inputType.addEventListener('change', this.__toggleElevationField);
+
+    //for clicking on the list of workout and takes you to the marker of the workout
+    containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
   }
 
   //This method gives the current position of the person
@@ -99,7 +111,7 @@ class App {
 
     const coords = [latitude, longitude];
 
-    this.#map = L.map('map').setView(coords, 15);
+    this.#map = L.map('map').setView(coords, this.#mapZoomLevel);
 
     //LeafLet Library for Map
     L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
@@ -115,6 +127,19 @@ class App {
     this.#mapEvent = mapE;
     form.classList.remove('hidden');
     inputDistance.focus();
+  }
+
+  _hideForm() {
+    inputDistance.value =
+    inputCadence.value =
+    inputDuration.value =
+    inputElevation.value =
+    '';
+
+    form.style.display = 'none';
+    form.classList.add('hidden');
+    setTimeout(() => (form.style.display = 'grid'), 1000);
+      
   }
 
   __toggleElevationField() {
@@ -168,15 +193,12 @@ class App {
     //render workout on map as marker
     this._renderWorkoutMarker(workout);
 
-    //hide from + clear input fields
+    //render workout on list
     this._renderWorkout(workout);
+    
+    //hide from + clear input fields
+    this._hideForm();
     //clearing input fields
-
-    inputDistance.value =
-      inputCadence.value =
-      inputDuration.value =
-      inputElevation.value =
-        '';
   }
   _renderWorkoutMarker(workout) {
     L.marker(workout.coords)
@@ -190,14 +212,14 @@ class App {
           className: `${workout.type}-popup`,
         })
       )
-      .setPopupContent(`${
-        workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'
-      } ${workout.description}`)
+      .setPopupContent(
+        `${workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'} ${workout.description}`
+      )
       .openPopup();
   }
   //render workout on list
   _renderWorkout(workout) {
-    const html = `<li class="workout workout--${workout.type}" data-id="${
+    let html = `<li class="workout workout--${workout.type}" data-id="${
       workout.id
     }">
        <h2 class="workout__title">${workout.description}</h2>
@@ -227,8 +249,8 @@ class App {
      </div>
    </li>`;
 
-   if(workout.type === 'cycling')
-   html += `<div class="workout__details">
+    if (workout.type === 'cycling')
+      html += `<div class="workout__details">
        <span class="workout__icon">⚡️</span>
        <span class="workout__value">${workout.speed.toFixed(1)}</span>
        <span class="workout__unit">min/km</span>
@@ -240,7 +262,28 @@ class App {
      </div>
    </li>`;
 
-   form.insertAdjacentHTML('afterend',html);
+    form.insertAdjacentHTML('afterend', html);
+  }
+
+  //Method for clicking on list of workout take you to the workout marker
+
+  _moveToPopup(e) {
+    if (!this.#map) return;
+
+    const workoutE = e.target.closest('.workout');
+
+    if (!workoutE) return;
+
+    const workout = this.#workouts.find(
+      work => work.id === workoutE.dataset.id
+    );
+
+    this.#map.setView(workout.coords, this.#mapZoomLevel, {
+      animate: true,
+      pan: {
+        duration: 1,
+      },
+    });
   }
 }
 
